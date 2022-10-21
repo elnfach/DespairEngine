@@ -1,1 +1,8 @@
+.vs/
 *.ipch
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
