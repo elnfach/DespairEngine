@@ -1,13 +1,13 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.23)
 
-set(ENGINE_NAME DespairEngine)
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 1)
+set(VERSION_TWEAK 0)
 
-add_library(${ENGINE_NAME} STATIC 
-	src/DespairEngine/Core.cpp 
-	include/DespairEngine/Core.h
+project(DespairEngine
+	VERSION 0.0.1
 )
 
-target_include_directories(${ENGINE_NAME} PUBLIC include)
-target_compile_features(${ENGINE_NAME} PUBLIC CXX_STANDARD 22)
-
-add_subdirectory(../libs/GLFW)
+add_subdirectory(Editor)
+add_subdirectory(Engine)
