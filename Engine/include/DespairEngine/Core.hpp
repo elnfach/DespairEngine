@@ -1,5 +1,8 @@
-#include <DespairEngine/Window.h>
-#include <DespairEngine/Debugger.h>
+#ifndef ENGINE_CORE_HPP
+#define ENGINE_CORE_HPP
+
+#include <DespairEngine/Window.hpp>
+#include <DespairEngine/Debugger.hpp>
 
 namespace engine
 {
@@ -22,3 +25,5 @@ namespace engine
 		virtual void update() = 0;
 	};
 }
+
+#endif // !ENGINE_CORE_HPP

@@ -3,28 +3,40 @@ cmake_minimum_required(VERSION 3.23)
 set(ENGINE_NAME DespairEngine)
 
 set(ENGINE_PUBLIC_INCLUDES
-	include/DespairEngine/Core.h
-	include/DespairEngine/Event.h
-)
+	include/DespairEngine/Core.hpp
+	include/DespairEngine/Event.hpp
+	include/DespairEngine/Debugger.hpp
 
-set(ENGINE_PRIVATE_INCLUDES
-	include/DespairEngine/Debugger.h
-	include/DespairEngine/Window.h
+	include/DespairEngine/Window.hpp
+	include/DespairEngine/rendering/opengl/ShaderProgram.hpp
+	include/DespairEngine/rendering/opengl/VertexBuffer.hpp
 )
 
 set(ENGINE_PRIVATE_SOURCES
 	src/DespairEngine/Core.cpp
 	src/DespairEngine/Window.cpp
+	src/DespairEngine/rendering/opengl/ShaderProgram.cpp
+	src/DespairEngine/rendering/opengl/VertexBuffer.cpp
 )
 
-add_library(${ENGINE_NAME} STATIC 
+set(ENGINE_ALL_SOURCES
 	${ENGINE_PUBLIC_INCLUDES}
 	${ENGINE_PRIVATE_INCLUDES}
 	${ENGINE_PRIVATE_SOURCES}
 )
+	
 
-target_include_directories(${ENGINE_NAME} PUBLIC include/)
-target_include_directories(${ENGINE_NAME} PRIVATE src/)
+add_library(${ENGINE_NAME} STATIC 
+	${ENGINE_ALL_SOURCES}
+)
+
+source_group(TREE  ${CMAKE_CURRENT_SOURCE_DIR} FILES
+	${ENGINE_ALL_SOURCES}
+)
+
+target_include_directories(${ENGINE_NAME} PUBLIC include)
+target_include_directories(${ENGINE_NAME} PRIVATE src)
+target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
 
 add_subdirectory(libs/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
 target_link_libraries(${ENGINE_NAME} PRIVATE glfw)

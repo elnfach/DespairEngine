@@ -1,5 +1,5 @@
-#ifndef ENGINE_EVENT_H
-#define ENGINE_EVENT_H
+#ifndef ENGINE_EVENT_HPP
+#define ENGINE_EVENT_HPP
 
 #include <array>
 #include <functional>
@@ -109,4 +109,4 @@ namespace engine
 	};
 }
 
-#endif // !ENGINE_EVENT_H
+#endif // !ENGINE_EVENT_HPP

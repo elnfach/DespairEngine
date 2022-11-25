@@ -1,6 +1,6 @@
-#include <iostream>
+#include <DespairEngine/Core.hpp>
 
-#include "DespairEngine/Core.h"
+#include <iostream>
 
 using namespace std;
 

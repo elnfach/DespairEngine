@@ -1,15 +1,15 @@
-#include "DespairEngine/Core.h"
+#include "DespairEngine/Core.hpp"
 
 namespace engine
 {
 	Core::Core()
 	{
-		
+		DEBUG_INFO("Starting Application");
 	}
 	
 	Core::~Core()
 	{
-
+		DEBUG_INFO("Closing Application");
 	}
 
 	int Core::start(const char* title, unsigned int width, unsigned int height)
@@ -19,7 +19,7 @@ namespace engine
 		event_dispatcher.add_event_listener<EventMouseMoved>(
 			[](EventMouseMoved& event)
 			{
-				DEBUG_INFO("[Mouse Moved] Mouse moved to {0}x{1}", event.x, event.y);
+				// DEBUG_INFO("[Mouse Moved] Mouse moved to {0}x{1}", event.x, event.y);
 			}
 		);
 		event_dispatcher.add_event_listener<EventWindowResize>(

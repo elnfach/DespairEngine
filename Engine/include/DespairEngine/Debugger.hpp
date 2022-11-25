@@ -1,5 +1,5 @@
-#ifndef ENGINE_DEBUGGER_H
-#define ENGINE_DEBUGGER_H
+#ifndef ENGINE_DEBUGGER_HPP
+#define ENGINE_DEBUGGER_HPP
 
 #include <spdlog/spdlog.h>
 
@@ -18,4 +18,4 @@ namespace engine
 #endif // NDEBUG
 }
 
-#endif // !ENGINE_DEBUGGER_H
+#endif // !ENGINE_DEBUGGER_HPP

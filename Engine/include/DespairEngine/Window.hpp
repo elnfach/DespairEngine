@@ -1,13 +1,15 @@
-#pragma once
+#ifndef ENGINE_WINDOW_HPP
+#define ENGINE_WINDOW_HPP
 
-#include <DespairEngine/Event.h>
-#include <DespairEngine/Debugger.h>
+#include <DespairEngine/Event.hpp>
+#include <DespairEngine/rendering/opengl/ShaderProgram.hpp>
+#include <DespairEngine/rendering/opengl/VertexBuffer.hpp>
 
-#include <glad/glad.h>
 #include <glfw/glfw3.h>
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/backends/imgui_impl_glfw.h>
 
 namespace engine
 {
@@ -48,3 +50,5 @@ namespace engine
 		void closeWindow();
 	};
 }
+
+#endif // !ENGINE_WINDOW_HPP
