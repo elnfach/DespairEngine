@@ -4,6 +4,8 @@
 #include <DespairEngine/Event.hpp>
 #include <DespairEngine/rendering/opengl/ShaderProgram.hpp>
 #include <DespairEngine/rendering/opengl/VertexBuffer.hpp>
+#include <DespairEngine/rendering/opengl/VertexArray.hpp>
+#include <DespairEngine/rendering/opengl/IndexBuffer.hpp>
 
 #include <glfw/glfw3.h>
 
@@ -33,7 +35,6 @@ namespace engine
 		unsigned int getHeight() const { return wnd_data.height; }
 		
 		void set_event_callback(const EventCallBackFn& callback) { wnd_data.eventCallBackFn = callback; }
-
 	private:
 		struct WindowData
 		{

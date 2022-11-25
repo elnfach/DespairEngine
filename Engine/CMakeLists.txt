@@ -10,6 +10,8 @@ set(ENGINE_PUBLIC_INCLUDES
 	include/DespairEngine/Window.hpp
 	include/DespairEngine/rendering/opengl/ShaderProgram.hpp
 	include/DespairEngine/rendering/opengl/VertexBuffer.hpp
+	include/DespairEngine/rendering/opengl/VertexArray.hpp
+	include/DespairEngine/rendering/opengl/IndexBuffer.hpp
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -17,6 +19,8 @@ set(ENGINE_PRIVATE_SOURCES
 	src/DespairEngine/Window.cpp
 	src/DespairEngine/rendering/opengl/ShaderProgram.cpp
 	src/DespairEngine/rendering/opengl/VertexBuffer.cpp
+	src/DespairEngine/rendering/opengl/VertexArray.cpp
+	src/DespairEngine/rendering/opengl/IndexBuffer.cpp
 )
 
 set(ENGINE_ALL_SOURCES

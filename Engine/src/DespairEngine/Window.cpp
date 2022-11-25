@@ -1,25 +1,19 @@
-#pragma once
-
 #include <DespairEngine/Window.hpp>
 
 namespace engine
 {
 	static bool s_GLFW_initialized = false;
 
-	GLfloat points[] = 
-	{
-		0.0f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f
+	GLfloat positions_colors2[] = {
+	   -0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 1.0f,
+	   -0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 1.0f,
+		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f
 	};
 
-	GLfloat colors[] =
-	{
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f
+	GLuint indices[] = {
+		0, 1, 2, 3, 2, 1
 	};
-
 	const char* vertex_shader =
 		"#version 460\n"
 		"layout(location = 0) in vec3 vertex_position;"
@@ -38,9 +32,10 @@ namespace engine
 		"}";
 
 	std::unique_ptr<ShaderProgram> p_shader_program;
-	std::unique_ptr<VertexBuffer> p_points_vbo;
-	std::unique_ptr<VertexBuffer> p_colors_vbo;
-	GLuint vao;
+
+	std::unique_ptr<VertexBuffer> p_positions_colors_vbo;
+	std::unique_ptr<IndexBuffer> p_index_buffer;
+	std::unique_ptr<VertexArray> p_vao;
 
 	Window::Window(const char* title, unsigned int width, unsigned int height)
 		: wnd_data({ title, width, height })
@@ -126,19 +121,23 @@ namespace engine
 			return false;
 		}
 
-		p_points_vbo = std::make_unique<VertexBuffer>(points, sizeof(points));
-		p_colors_vbo = std::make_unique<VertexBuffer>(colors, sizeof(colors));
+		BufferLayout buffer_layout_1vec3
+		{
+			ShaderDataType::Float3
+		};
 
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
+		BufferLayout buffer_layout_2vec3
+		{
+			ShaderDataType::Float3,
+			ShaderDataType::Float3
+		};
 
-		glEnableVertexAttribArray(0);
-		p_points_vbo->bind();
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+		p_vao = std::make_unique<VertexArray>();
+		p_positions_colors_vbo = std::make_unique<VertexBuffer>(positions_colors2, sizeof(positions_colors2), buffer_layout_2vec3);
+		p_index_buffer = std::make_unique<IndexBuffer>(indices, sizeof(indices) / sizeof(GLuint));
 
-		glEnableVertexAttribArray(1);
-		p_colors_vbo->bind();
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+		p_vao->add_vertex_buffer(*p_positions_colors_vbo);
+		p_vao->set_index_buffer(*p_index_buffer);
 
 		return 0;
 	}
@@ -154,10 +153,6 @@ namespace engine
 		glClearColor(1, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		p_shader_program->bind();
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.DisplaySize.x = static_cast<float>(getWidth());
@@ -167,7 +162,11 @@ namespace engine
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		ImGui::ShowDemoWindow();
+		// ImGui::ShowDemoWindow();
+
+		p_shader_program->bind();
+		p_vao->bind();
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(p_vao->get_indices_count()), GL_UNSIGNED_INT, nullptr);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
