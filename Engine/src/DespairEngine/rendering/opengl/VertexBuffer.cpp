@@ -4,7 +4,7 @@
 
 #include "DespairEngine/Debugger.hpp"
 
-#include "DespairEngine/rendering/opengl/VertexBuffer.hpp"
+#include "VertexBuffer.hpp"
 
 namespace engine {
 

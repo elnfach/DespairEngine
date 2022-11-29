@@ -1,4 +1,4 @@
-#include "DespairEngine/Window.hpp"
+#include "Window.hpp"
 #include "DespairEngine/Debugger.hpp"
 
 #include "DespairEngine/Core.hpp"

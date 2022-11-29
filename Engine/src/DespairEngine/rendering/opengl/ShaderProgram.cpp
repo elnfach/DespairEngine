@@ -2,7 +2,7 @@
 
 #include "DespairEngine/Debugger.hpp"
 
-#include "DespairEngine/rendering/opengl/ShaderProgram.hpp"
+#include "ShaderProgram.hpp"
 
 namespace engine
 {

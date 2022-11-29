@@ -1,8 +1,9 @@
-#include "Event.hpp"
-
-
 #ifndef ENGINE_CORE_HPP
 #define ENGINE_CORE_HPP
+
+#include <memory>
+
+#include "DespairEngine/Event.hpp"
 
 namespace engine
 {

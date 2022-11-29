@@ -1,6 +1,9 @@
 #ifndef ENGINE_VERTEX_ARRAY_HPP
 #define EGNINE_VERTEX_ARRAY_HPP
 
+#include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
+
 namespace engine {
 
     class VertexArray {

@@ -1,5 +1,3 @@
-#include <memory>
-
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
 
@@ -13,7 +11,7 @@
 #include "DespairEngine/rendering/opengl/VertexArray.hpp"
 #include "DespairEngine/rendering/opengl/IndexBuffer.hpp"
 
-#include "DespairEngine/Window.hpp"
+#include "Window.hpp"
 
 namespace engine
 {

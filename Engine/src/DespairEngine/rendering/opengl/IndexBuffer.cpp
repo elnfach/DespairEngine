@@ -1,9 +1,9 @@
 #include <glad/glad.h>
 
 #include "DespairEngine/Debugger.hpp"
-#include "DespairEngine/rendering/opengl/VertexBuffer.hpp"
+#include "VertexBuffer.hpp"
 
-#include "DespairEngine/rendering/opengl/IndexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 namespace engine {
 

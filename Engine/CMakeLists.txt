@@ -6,12 +6,14 @@ set(ENGINE_PUBLIC_INCLUDES
 	include/DespairEngine/Core.hpp
 	include/DespairEngine/Event.hpp
 	include/DespairEngine/Debugger.hpp
+)
 
-	include/DespairEngine/Window.hpp
-	include/DespairEngine/rendering/opengl/ShaderProgram.hpp
-	include/DespairEngine/rendering/opengl/VertexBuffer.hpp
-	include/DespairEngine/rendering/opengl/VertexArray.hpp
-	include/DespairEngine/rendering/opengl/IndexBuffer.hpp
+set(ENGINE_PRIVATE_INCLUDES
+	src/DespairEngine/Window.hpp
+	src/DespairEngine/rendering/opengl/ShaderProgram.hpp
+	src/DespairEngine/rendering/opengl/VertexBuffer.hpp
+	src/DespairEngine/rendering/opengl/VertexArray.hpp
+	src/DespairEngine/rendering/opengl/IndexBuffer.hpp
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -25,6 +27,7 @@ set(ENGINE_PRIVATE_SOURCES
 
 set(ENGINE_ALL_SOURCES
 	${ENGINE_PUBLIC_INCLUDES}
+	${ENGINE_PRIVATE_INCLUDES}
 	${ENGINE_PRIVATE_SOURCES}
 )
 	

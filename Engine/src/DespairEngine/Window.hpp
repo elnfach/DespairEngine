@@ -1,6 +1,13 @@
 #ifndef ENGINE_WINDOW_HPP
 #define ENGINE_WINDOW_HPP
 
+#include <string>
+#include <memory>
+
+#include "DespairEngine/Event.hpp"
+
+struct GLFWwindow;
+
 namespace engine
 {
 	class Window
