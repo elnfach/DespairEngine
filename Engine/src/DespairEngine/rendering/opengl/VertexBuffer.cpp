@@ -1,4 +1,5 @@
 #include <vector>
+
 #include <glad/glad.h>
 
 #include "DespairEngine/Debugger.hpp"
