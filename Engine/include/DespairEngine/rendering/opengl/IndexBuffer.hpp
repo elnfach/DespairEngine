@@ -1,11 +1,6 @@
 #ifndef ENGINE_INDEX_BUFFER_HPP
 #define ENGINE_INDEX_BUFFER_HPP
 
-#include <glad/glad.h>
-#include <DespairEngine/Debugger.hpp>
-
-#include <DespairEngine/rendering/opengl/VertexBuffer.hpp>
-
 namespace engine {
 
     class IndexBuffer {

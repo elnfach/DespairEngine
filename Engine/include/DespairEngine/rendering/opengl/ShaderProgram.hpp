@@ -1,10 +1,6 @@
 #ifndef ENGINE_SHADER_PROGRAM
 #define ENGINE_SHADER_PROGRAM
 
-#include <DespairEngine/Debugger.hpp>
-
-#include <glad/glad.h>
-
 namespace engine
 {
 	class ShaderProgram

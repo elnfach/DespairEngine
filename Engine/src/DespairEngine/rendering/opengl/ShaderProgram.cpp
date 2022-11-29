@@ -1,4 +1,8 @@
-#include <DespairEngine/rendering/opengl/ShaderProgram.hpp>
+#include <glad/glad.h>
+
+#include "DespairEngine/Debugger.hpp"
+
+#include "DespairEngine/rendering/opengl/ShaderProgram.hpp"
 
 namespace engine
 {

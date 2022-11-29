@@ -1,10 +1,6 @@
 #ifndef ENGINE_VERTEX_ARRAY_HPP
 #define EGNINE_VERTEX_ARRAY_HPP
 
-#include <DespairEngine/rendering/opengl/VertexBuffer.hpp>
-#include <DespairEngine/rendering/opengl/IndexBuffer.hpp>
-#include <DespairEngine/Debugger.hpp>
-
 namespace engine {
 
     class VertexArray {

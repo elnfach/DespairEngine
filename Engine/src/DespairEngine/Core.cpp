@@ -1,3 +1,6 @@
+#include "DespairEngine/Window.hpp"
+#include "DespairEngine/Debugger.hpp"
+
 #include "DespairEngine/Core.hpp"
 
 namespace engine
