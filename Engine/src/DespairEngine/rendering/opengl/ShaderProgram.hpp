@@ -1,6 +1,8 @@
 #ifndef ENGINE_SHADER_PROGRAM
 #define ENGINE_SHADER_PROGRAM
 
+#include <glm/mat4x4.hpp>
+
 namespace engine
 {
 	class ShaderProgram
@@ -21,6 +23,7 @@ namespace engine
 		void bind() const;
 		static void unbind();
 		bool isCompiled() const { return m_isCompiled; }
+		void setMatrix4(const char* name, const glm::mat4& matrix) const;
 	};
 }
 

@@ -6,23 +6,30 @@ set(ENGINE_PUBLIC_INCLUDES
 	include/DespairEngine/Core.hpp
 	include/DespairEngine/Event.hpp
 	include/DespairEngine/Debugger.hpp
+	include/DespairEngine/Camera.hpp
 )
 
 set(ENGINE_PRIVATE_INCLUDES
 	src/DespairEngine/Window.hpp
+	src/DespairEngine/modules/UIModule.hpp
 	src/DespairEngine/rendering/opengl/ShaderProgram.hpp
 	src/DespairEngine/rendering/opengl/VertexBuffer.hpp
 	src/DespairEngine/rendering/opengl/VertexArray.hpp
 	src/DespairEngine/rendering/opengl/IndexBuffer.hpp
+	src/DespairEngine/rendering/opengl/RendererOpenGL.hpp
+	
 )
 
 set(ENGINE_PRIVATE_SOURCES
 	src/DespairEngine/Core.cpp
 	src/DespairEngine/Window.cpp
+	src/DespairEngine/Camera.cpp
+	src/DespairEngine/modules/UIModule.cpp
 	src/DespairEngine/rendering/opengl/ShaderProgram.cpp
 	src/DespairEngine/rendering/opengl/VertexBuffer.cpp
 	src/DespairEngine/rendering/opengl/VertexArray.cpp
 	src/DespairEngine/rendering/opengl/IndexBuffer.cpp
+	src/DespairEngine/rendering/opengl/RendererOpenGL.cpp
 )
 
 set(ENGINE_ALL_SOURCES
@@ -42,7 +49,7 @@ source_group(TREE  ${CMAKE_CURRENT_SOURCE_DIR} FILES
 
 target_include_directories(${ENGINE_NAME} PUBLIC include)
 target_include_directories(${ENGINE_NAME} PRIVATE src)
-target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
+target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_20)
 
 add_subdirectory(libs/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
 target_link_libraries(${ENGINE_NAME} PRIVATE glfw)
@@ -52,6 +59,9 @@ target_link_libraries(${ENGINE_NAME} PRIVATE spdlog)
 
 add_subdirectory(libs/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
 target_link_libraries(${ENGINE_NAME} PRIVATE glad)
+
+add_subdirectory(libs/glm ${CMAKE_CURRENT_BINARY_DIR}/glm)
+target_link_libraries(${ENGINE_NAME} PRIVATE glm)
 
 set(IMGUI_INCLUDES
 	libs/imgui/imgui.h

@@ -1,22 +1,25 @@
-#include <glad/glad.h>
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
-#include "DespairEngine/Event.hpp"
+#include <glm/mat3x3.hpp>
+#include <glm/trigonometric.hpp>
+
+#include "DespairEngine/Camera.hpp"
+#include "DespairEngine/Debugger.hpp"
+#include "DespairEngine/modules/UIModule.hpp"
 #include "DespairEngine/rendering/opengl/ShaderProgram.hpp"
 #include "DespairEngine/rendering/opengl/VertexBuffer.hpp"
 #include "DespairEngine/rendering/opengl/VertexArray.hpp"
 #include "DespairEngine/rendering/opengl/IndexBuffer.hpp"
+#include "DespairEngine/rendering/opengl/RendererOpenGL.hpp"
 
 #include "Window.hpp"
 
 namespace engine
 {
-	static bool s_GLFW_initialized = false;
-
 	GLfloat positions_colors2[] = {
 	   -0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,
 		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 1.0f,
@@ -28,37 +31,44 @@ namespace engine
 		0, 1, 2, 3, 2, 1
 	};
 	const char* vertex_shader =
-		"#version 460\n"
-		"layout(location = 0) in vec3 vertex_position;"
-		"layout(location = 1) in vec3 vertex_color;"
-		"out vec3 color;"
-		"void main() {"
-		"   color = vertex_color;"
-		"   gl_Position = vec4(vertex_position, 1.0);"
-		"}";
+		R"(#version 460
+           layout(location = 0) in vec3 vertex_position;
+           layout(location = 1) in vec3 vertex_color;
+           uniform mat4 model_matrix;
+           uniform mat4 view_projection_matrix;
+           out vec3 color;
+           void main() {
+              color = vertex_color;
+              gl_Position = model_matrix * vec4(vertex_position, 1.0);
+              gl_Position = view_projection_matrix * model_matrix * vec4(vertex_position, 1.0);
+           }
+        )";
 	const char* fragment_shader =
-		"#version 460\n"
-		"in vec3 color;"
-		"out vec4 frag_color;"
-		"void main() {"
-		"   frag_color = vec4(color, 1.0);"
-		"}";
+		R"(#version 460
+           in vec3 color;
+           out vec4 frag_color;
+           void main() {
+              frag_color = vec4(color, 1.0);
+           }
+        )";
 
 	std::unique_ptr<ShaderProgram> p_shader_program;
-
 	std::unique_ptr<VertexBuffer> p_positions_colors_vbo;
 	std::unique_ptr<IndexBuffer> p_index_buffer;
 	std::unique_ptr<VertexArray> p_vao;
+	float scale[3] = { 1.f, 1.f, 1.f };
+	float rotate = 0.f;
+	float translate[3] = { 0.f, 0.f, 0.f };
+
+	float camera_position[3] = { 0.f, 0.f, 1.f };
+	float camera_rotation[3] = { 0.f, 0.f, 0.f };
+	bool perspective_camera = false;
+	Camera camera;
 
 	Window::Window(const char* title, unsigned int width, unsigned int height)
-		: wnd_data({ title, width, height })
+		: m_window_data({ title, width, height })
 	{
 		int result = initWindow();
-
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGui_ImplOpenGL3_Init();
-		ImGui_ImplGlfw_InitForOpenGL(window, true);
 	}
 
 	Window::~Window()
@@ -68,27 +78,33 @@ namespace engine
 
 	int Window::initWindow()
 	{
-		if (!glfwInit()) return -1;
+		glfwSetErrorCallback([](int error_code, const char* description)
+			{
+				DEBUG_CRITICAL("GLFW error: {0}", description);
+			}
+		);
 
-		window = glfwCreateWindow(wnd_data.width, wnd_data.height, wnd_data.title, NULL, NULL);
-		if (!window)
+		if (!glfwInit())
 		{
-			closeWindow();
-			return -1;
-
-		}
-
-		glfwMakeContextCurrent(window);
-
-		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		{
-			//DEBUG_CRITICAL("Failed to initialize GLAD");
+			DEBUG_CRITICAL("Can't initialize GLFW!");
 			return -1;
 		}
 
-		glfwSetWindowUserPointer(window, &wnd_data);
+		m_window = glfwCreateWindow(m_window_data.width, m_window_data.height, m_window_data.title, NULL, NULL);
+		if (!m_window)
+		{
+			return -2;
+		}
 
-		glfwSetWindowSizeCallback(window,
+		if (!RendererOpenGL::init(m_window))
+		{
+			DEBUG_CRITICAL("Failed to initialize OpenGL renderer");
+			return -3;
+		}
+
+		glfwSetWindowUserPointer(m_window, &m_window_data);
+
+		glfwSetWindowSizeCallback(m_window,
 			[](GLFWwindow* window, int width, int height)
 			{
 				WindowData& wnd_data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
@@ -100,7 +116,7 @@ namespace engine
 			}
 		);
 
-		glfwSetCursorPosCallback(window,
+		glfwSetCursorPosCallback(m_window,
 			[](GLFWwindow* window, double x, double y)
 			{
 				WindowData& wnd_data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
@@ -111,7 +127,7 @@ namespace engine
 			}
 		);
 
-		glfwSetWindowCloseCallback(window,
+		glfwSetWindowCloseCallback(m_window,
 			[](GLFWwindow* window)
 			{
 				WindowData& wnd_data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
@@ -121,12 +137,14 @@ namespace engine
 			}
 		);
 
-		glfwSetFramebufferSizeCallback(window,
+		glfwSetFramebufferSizeCallback(m_window,
 			[](GLFWwindow* window, int width, int height)
 			{
-				glViewport(0, 0, width, height);
+				RendererOpenGL::setViewport(width, height);
 			}
 		);
+
+		UIModule::onWindowCreate(m_window);
 
 		p_shader_program = std::make_unique<ShaderProgram>(vertex_shader, fragment_shader);
 		if (!p_shader_program->isCompiled())
@@ -157,34 +175,57 @@ namespace engine
 
 	void Window::closeWindow()
 	{
-		glfwDestroyWindow(window);
+		UIModule::onWindowClose();
+		glfwDestroyWindow(m_window);
 		glfwTerminate();
 	}
 
 	void Window::update()
 	{
-		glClearColor(1, 0, 0, 0);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-
-		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize.x = static_cast<float>(getWidth());
-		io.DisplaySize.y = static_cast<float>(getHeight());
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
-		// ImGui::ShowDemoWindow();
-
+		RendererOpenGL::setClearColor(m_background_color[0],
+			m_background_color[1], m_background_color[2], m_background_color[3]);
+		RendererOpenGL::clear();
 		p_shader_program->bind();
-		p_vao->bind();
-		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(p_vao->get_indices_count()), GL_UNSIGNED_INT, nullptr);
 
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		glm::mat4 scale_matrix(scale[0], 0, 0, 0,
+			0, scale[1], 0, 0,
+			0, 0, scale[2], 0,
+			0, 0, 0, 1);
+		float rotate_in_radians = glm::radians(rotate);
+		glm::mat4 rotate_matrix(cos(rotate_in_radians), sin(rotate_in_radians), 0, 0,
+			-sin(rotate_in_radians), cos(rotate_in_radians), 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1);
+		glm::mat4 translate_matrix(1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			translate[0], translate[1], translate[2], 1);
+		glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
+		p_shader_program->setMatrix4("model_matrix", model_matrix);
 
-		glfwSwapBuffers(window);
+		camera.set_position_rotation(glm::vec3(camera_position[0], camera_position[1], camera_position[2]),
+			glm::vec3(camera_rotation[0], camera_rotation[1], camera_rotation[2]));
+		camera.set_projection_mode(perspective_camera ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic);
+		p_shader_program->setMatrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
+
+		RendererOpenGL::draw(*p_vao);
+
+		UIModule::onUIDrawBegin();
+		bool show = true;
+		UIModule::showExampleAppDockSpace(&show);
+		ImGui::ShowDemoWindow();
+		ImGui::Begin("Background Color Window");
+		ImGui::ColorEdit4("Background Color", m_background_color);
+		ImGui::SliderFloat3("scale", scale, 0.f, 2.f);
+		ImGui::SliderFloat("rotate", &rotate, 0.f, 360.f);
+		ImGui::SliderFloat3("translate", translate, -1.f, 1.f);
+		ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
+		ImGui::SliderFloat3("camera rotation", camera_rotation, 0, 360.f);
+		ImGui::Checkbox("Perspective camera", &perspective_camera);
+		ImGui::End();
+		UIModule::onUIDrawEnd();
+
+		glfwSwapBuffers(m_window);
 		glfwPollEvents();
 	}
 }

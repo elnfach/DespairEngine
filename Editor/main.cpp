@@ -16,6 +16,6 @@ class Decay : public engine::Core
 int main()
 {
 	auto decay = make_unique<Decay>();
-	int return_code = decay->start("Decay", 1920, 1080);
+	int return_code = decay->start("Decay", 1080, 720);
 	return return_code;
 }

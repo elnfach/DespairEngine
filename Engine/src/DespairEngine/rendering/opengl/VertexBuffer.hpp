@@ -1,6 +1,8 @@
 #ifndef ENGINE_VERTEX_BUFFER_HPP
 #define ENGINE_VERTEX_BUFFER_HPP
 
+#include <vector>
+
 namespace engine {
 
     enum class ShaderDataType
