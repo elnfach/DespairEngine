@@ -6,5 +6,5 @@ add_executable(${EDITOR_NAME}
 	main.cpp
 )
 
-target_link_libraries(${EDITOR_NAME} DespairEngine glfw glad spdlog ImGui)
+target_link_libraries(${EDITOR_NAME} DespairEngine ImGui glm)
 set_target_properties(${EDITOR_NAME} PROPERTIES RUNTIME_OUTPUT_DERICTORIES ${CMAKE_BINARY_DIR}/bin/)

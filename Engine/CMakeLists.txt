@@ -7,6 +7,8 @@ set(ENGINE_PUBLIC_INCLUDES
 	include/DespairEngine/Event.hpp
 	include/DespairEngine/Debugger.hpp
 	include/DespairEngine/Camera.hpp
+	include/DespairEngine/Keys.hpp
+	include/DespairEngine/Input.hpp
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -24,6 +26,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/DespairEngine/Core.cpp
 	src/DespairEngine/Window.cpp
 	src/DespairEngine/Camera.cpp
+	src/DespairEngine/Input.cpp
 	src/DespairEngine/modules/UIModule.cpp
 	src/DespairEngine/rendering/opengl/ShaderProgram.cpp
 	src/DespairEngine/rendering/opengl/VertexBuffer.cpp

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+
 #include <glm/ext/vector_float2.hpp>
 
 #include "DespairEngine/Event.hpp"
@@ -29,6 +30,8 @@ namespace engine
 		const char* getTitle() const { return m_window_data.title; }
 		unsigned int getWidth() const { return m_window_data.width; }
 		unsigned int getHeight() const { return m_window_data.height; }
+
+		glm::vec2 getCurrentCursorPosition() const;
 		
 		void set_event_callback(const EventCallBackFn& callback) { m_window_data.eventCallBackFn = callback; }
 	private:
@@ -40,9 +43,8 @@ namespace engine
 			EventCallBackFn eventCallBackFn;
 		};
 
-		GLFWwindow* m_window = nullptr;
+		GLFWwindow* m_ptr_window = nullptr;
 		WindowData m_window_data;
-		float m_background_color[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 
 		int initWindow();
 		void closeWindow();
