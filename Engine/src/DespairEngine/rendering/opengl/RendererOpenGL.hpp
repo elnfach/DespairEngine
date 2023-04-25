@@ -15,6 +15,9 @@ namespace engine {
         static void clear();
         static void setViewport(const unsigned int width, const unsigned int height, const unsigned int left_offset = 0, const unsigned int bottom_offset = 0);
 
+        static void enableDepthTest();
+        static void disableDepthTest();
+
         static const char* getVendor_str();
         static const char* getRenderer_str();
         static const char* getVersion_str();

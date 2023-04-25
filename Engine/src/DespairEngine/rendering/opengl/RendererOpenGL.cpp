@@ -40,12 +40,22 @@ namespace engine {
 
     void RendererOpenGL::clear()
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     void RendererOpenGL::setViewport(const unsigned int width, const unsigned int height, const unsigned int left_offset, const unsigned int bottom_offset)
     {
         glViewport(left_offset, bottom_offset, width, height);
+    }
+
+    void RendererOpenGL::enableDepthTest()
+    {
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    void RendererOpenGL::disableDepthTest()
+    {
+        glDisable(GL_DEPTH_TEST);
     }
 
     const char* RendererOpenGL::getVendor_str()

@@ -1,8 +1,9 @@
 #include <iostream>
+
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
 #include <DespairEngine/Input.hpp>
-
 #include <DespairEngine/Core.hpp>
 
 class DespairEngineEditor : public engine::Core
@@ -88,6 +89,57 @@ class DespairEngineEditor : public engine::Core
         camera.addMovementAndRotatition(movement_delta, rotation_delta);
 	}
 
+    void setupDockspaceMenu()
+    {
+        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoWindowMenuButton;
+        static ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        window_flags |= ImGuiWindowFlags_NoBackground;
+
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("DockSpace", nullptr, window_flags);
+        ImGui::PopStyleVar(3);
+
+        ImGuiIO& io = ImGui::GetIO();
+        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem("New Scene...", NULL))
+                {
+
+                }
+                if (ImGui::MenuItem("Open Scene...", NULL))
+                {
+
+                }
+                if (ImGui::MenuItem("Save Scene...", NULL))
+                {
+
+                }
+                ImGui::Separator();
+                if (ImGui::MenuItem("Exit", NULL))
+                {
+                    close();
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+        ImGui::End();
+    }
+
+
     virtual void onMouseButtonEvent(const engine::MouseButton button_code,
         const double x_pos,
         const double y_pos,
@@ -99,12 +151,18 @@ class DespairEngineEditor : public engine::Core
 
 	virtual void onUIDraw() override
 	{
-        camera_position[0] = camera.getCameraPosition().x;
-        camera_position[1] = camera.getCameraPosition().y;
-        camera_position[2] = camera.getCameraPosition().z;
-        camera_rotation[0] = camera.getCameraRotation().x;
-        camera_rotation[1] = camera.getCameraRotation().y;
-        camera_rotation[2] = camera.getCameraRotation().z;
+        setupDockspaceMenu();
+
+        camera_position[0] = camera.getPosition().x;
+        camera_position[1] = camera.getPosition().y;
+        camera_position[2] = camera.getPosition().z;
+        camera_rotation[0] = camera.getPosition().x;
+        camera_rotation[1] = camera.getPosition().y;
+        camera_rotation[2] = camera.getPosition().z;
+
+        camera_fov = camera.getFieldOfView();
+        camera_near_plane = camera.getNearClipPlane();
+        camera_far_plane = camera.getFarClipPlane();
 
 		ImGui::Begin("Editor");
         if (ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f))
@@ -117,7 +175,22 @@ class DespairEngineEditor : public engine::Core
         }
 		ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
 		ImGui::SliderFloat3("camera rotation", camera_rotation, 0, 360.f);
-		ImGui::Checkbox("Perspective camera", &perspective_camera);
+        if (ImGui::SliderFloat("camera FOV", &camera_fov, 1.f, 120.f))
+        {
+            camera.setFieldOfView(camera_fov);
+        }
+        if (ImGui::SliderFloat("camera near clip plane", &camera_near_plane, 0.1f, 10.f))
+        {
+            camera.setNearClipPlane(camera_near_plane);
+        }
+        if (ImGui::SliderFloat("camera far clip plane", &camera_far_plane, 1.f, 100.f))
+        {
+            camera.setFarClipPlane(camera_far_plane);
+        }
+        if (ImGui::Checkbox("Perspective camera", &perspective_camera))
+        {
+            camera.setProjectionMode(perspective_camera ? engine::Camera::ProjectionMode::Perspective : engine::Camera::ProjectionMode::Orthographic);
+        }
 		ImGui::End();
 	}
 };

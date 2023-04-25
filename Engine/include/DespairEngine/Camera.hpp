@@ -23,15 +23,24 @@ namespace engine
 		void setRotation(const glm::vec3& rotation);
 		void setPositionRotation(const glm::vec3& position, const glm::vec3& rotation);
 		void setProjectionMode(const ProjectionMode projection_mode);
+		void setFarClipPlane(const float far);
+		void setNearClipPlane(const float near);
+		void setViewportSize(const float width, const float height);
+		void setFieldOfView(const float fov);
+
 		const glm::mat4& getViewMatrix();
 		const glm::mat4& getProjectionMatrix() const { return m_projection_matrix; }
+
+		const float getFarClipPlane() const { return m_far_clip_plane; }
+		const float getNearClipPlane() const { return m_near_clip_plane; }
+		const float getFieldOfView() const { return m_field_of_view; }
 
 		void moveForward(const float delta);
 		void moveRight(const float delta);
 		void moveUp(const float delta);
 
-		const glm::vec3& getCameraPosition() const { return m_position; }
-		const glm::vec3& getCameraRotation() const { return m_rotation; }
+		const glm::vec3& getPosition() const { return m_position; }
+		const glm::vec3& getRotation() const { return m_rotation; }
 
 		// movement_delta.x - forward, movement_delta.y - right, movement_delta.z - up
 		// rotation_delta.x - roll, rotation_delta.y - pitch, rotation_delta.z - yaw
@@ -48,6 +57,11 @@ namespace engine
 		glm::vec3 m_direction;
 		glm::vec3 m_right;
 		glm::vec3 m_up;
+		float m_far_clip_plane{ 100.f };
+		float m_near_clip_plane{ 0.1f };
+		float m_viewport_width{ 800.f };
+		float m_viewport_height{ 600.f };
+		float m_field_of_view{ 60.f };
 
 		static constexpr glm::vec3 s_world_up{ 0.f, 0.f, 1.f };
 		static constexpr glm::vec3 s_world_right{ 0.f, -1.f, 0.f };
