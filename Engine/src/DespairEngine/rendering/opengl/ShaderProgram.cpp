@@ -118,4 +118,14 @@ namespace engine
 	{
 		glUniform1i(glGetUniformLocation(m_id, name), value);
 	}
+
+	void ShaderProgram::setFloat(const char* name, const float value) const
+	{
+		glUniform1f(glGetUniformLocation(m_id, name), value);
+	}
+
+	void ShaderProgram::setVec3(const char* name, const glm::vec3& value) const
+	{
+		glUniform3f(glGetUniformLocation(m_id, name), value.x, value.y, value.z);
+	}
 }
