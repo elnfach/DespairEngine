@@ -125,6 +125,6 @@ class DespairEngineEditor : public engine::Core
 int main()
 {
 	auto ptr_despairEngineEditor = std::make_unique<DespairEngineEditor>();
-	int returnCode = ptr_despairEngineEditor->start("Despair Engine", 1080, 720);
+    int returnCode = ptr_despairEngineEditor->start("SimpleEngine Editor", 1024, 1024);
 	return returnCode;
 }

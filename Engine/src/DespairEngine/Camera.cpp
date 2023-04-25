@@ -21,6 +21,7 @@ namespace engine
 		if (m_update_view_matrix)
 		{
 			updateViewMatrix();
+			m_update_view_matrix = false;
 		}
 		return m_view_matrix;
 	}
