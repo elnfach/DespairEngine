@@ -38,6 +38,7 @@ namespace engine
 			return -1;
 		}
 
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 		m_ptr_window = glfwCreateWindow(m_window_data.width, m_window_data.height, m_window_data.title, NULL, NULL);
 		if (!m_ptr_window)
 		{
