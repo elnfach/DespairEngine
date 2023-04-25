@@ -155,22 +155,21 @@ namespace engine
            layout(location = 1) in vec3 vertex_normal;
            layout(location = 2) in vec2 texture_coord;
 
-           uniform mat4 model_matrix;
-           uniform mat4 view_projection_matrix;
-		   uniform int current_frame; 
+           uniform mat4 model_view_matrix;
+           uniform mat4 mvp_matrix;
+           uniform mat3 normal_matrix;
 
 		   out vec2 tex_coord_smile;
            out vec2 tex_coord_quads;
-		   out vec3 frag_position;
-           out vec3 frag_normal;
+		   out vec3 frag_position_eye;
+           out vec3 frag_normal_eye;
            void main() {
 
 			  tex_coord_smile = texture_coord;
               tex_coord_quads = texture_coord + vec2(current_frame / 1000.f, current_frame / 1000.f);
-              frag_normal = mat3(transpose(inverse(model_matrix))) * vertex_normal;
-              vec4 vertex_position_world = model_matrix * vec4(vertex_position, 1.0);
-              frag_position = vertex_position_world.xyz;
-              gl_Position = view_projection_matrix * vertex_position_world;
+              frag_normal_eye = normal_matrix * vertex_normal;
+              frag_position_eye = vec3(model_view_matrix * vec4(vertex_position, 1.0));
+              gl_Position = mvp_matrix * vec4(vertex_position, 1.0);
            }
         )";
 
@@ -179,14 +178,13 @@ namespace engine
 
 		   in vec2 tex_coord_smile;
            in vec2 tex_coord_quads;
-		   in vec3 frag_position;
-           in vec3 frag_normal;
+		   in vec3 frag_position_eye;
+           in vec3 frag_normal_eye;
 
            layout (binding = 0) uniform sampler2D InTexture_Smile;
            layout (binding = 1) uniform sampler2D InTexture_Quads;
 
-		   uniform vec3 camera_position;
-           uniform vec3 light_position;
+		   uniform vec3 light_position_eye;
            uniform vec3 light_color;
            uniform float ambient_factor;
            uniform float diffuse_factor;
@@ -198,11 +196,11 @@ namespace engine
               // ambient
               vec3 ambient = ambient_factor * light_color;
               // diffuse
-              vec3 normal = normalize(frag_normal);
-              vec3 light_dir = normalize(light_position - frag_position);
+              vec3 normal = normalize(frag_normal_eye);
+              vec3 light_dir = normalize(light_position_eye - frag_position_eye);
               vec3 diffuse = diffuse_factor * light_color * max(dot(normal, light_dir), 0.0);
               // specular
-              vec3 view_dir = normalize(camera_position - frag_position);
+              vec3 view_dir = normalize(-frag_position_eye);
               vec3 reflect_dir = reflect(-light_dir, normal);
               float specular_value = pow(max(dot(view_dir, reflect_dir), 0.0), shininess);
               vec3 specular = specular_factor * specular_value * light_color;
@@ -216,10 +214,9 @@ namespace engine
            layout(location = 0) in vec3 vertex_position;
            layout(location = 1) in vec3 vertex_normal;
            layout(location = 2) in vec2 texture_coord;
-           uniform mat4 model_matrix;
-           uniform mat4 view_projection_matrix;
+           uniform mat4 mvp_matrix;
            void main() {
-              gl_Position = view_projection_matrix * model_matrix * vec4(vertex_position * 0.1f, 1.0);
+              gl_Position = mvp_matrix * vec4(vertex_position * 0.1f, 1.0);
            }
         )";
 
@@ -287,11 +284,7 @@ namespace engine
 		//p_shader_program->setMatrix4("model_matrix", model_matrix);
 		static int current_frame = 0;
 		p_shader_program->setInt("current_frame", current_frame++);
-
-		p_shader_program->setMatrix4("view_projection_matrix", camera.getProjectionMatrix() * camera.getViewMatrix());
-
-		p_shader_program->setVec3("camera_position", camera.getPosition());
-		p_shader_program->setVec3("light_position", glm::vec3(light_source_position[0], light_source_position[1], light_source_position[2]));
+		p_shader_program->setVec3("light_position_eye", glm::vec3(camera.getViewMatrix() * glm::vec4(light_source_position[0], light_source_position[1], light_source_position[2], 1.f)));
 		p_shader_program->setVec3("light_color", glm::vec3(light_source_color[0], light_source_color[1], light_source_color[2]));
 		p_shader_program->setFloat("ambient_factor", ambient_factor);
 		p_shader_program->setFloat("diffuse_factor", diffuse_factor);
@@ -306,18 +299,20 @@ namespace engine
 				0, 1, 0, 0,
 				0, 0, 1, 0,
 				current_position[0], current_position[1], current_position[2], 1);
-			p_shader_program->setMatrix4("model_matrix", translate_matrix);
+			const glm::mat4 model_view_matrix = camera.getViewMatrix() * translate_matrix;
+			p_shader_program->setMatrix4("model_view_matrix", model_view_matrix);
+			p_shader_program->setMatrix4("mvp_matrix", camera.getProjectionMatrix() * model_view_matrix);
+			p_shader_program->setMatrix3("normal_matrix", glm::transpose(glm::inverse(glm::mat3(model_view_matrix))));
 			RendererOpenGL::draw(*p_cube_vao);
 		}
 		// light source
 		{
 			p_light_source_shader_program->bind();
-			p_light_source_shader_program->setMatrix4("view_projection_matrix", camera.getProjectionMatrix() * camera.getViewMatrix());
 			glm::mat4 translate_matrix(1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
 				light_source_position[0], light_source_position[1], light_source_position[2], 1);
-			p_light_source_shader_program->setMatrix4("model_matrix", translate_matrix);
+			p_light_source_shader_program->setMatrix4("mvp_matrix", camera.getProjectionMatrix() * camera.getViewMatrix() * translate_matrix);
 			p_light_source_shader_program->setVec3("light_color", glm::vec3(light_source_color[0], light_source_color[1], light_source_color[2]));
 			RendererOpenGL::draw(*p_cube_vao);
 		}
@@ -346,7 +341,7 @@ namespace engine
 			[&](EventWindowResize& event)
 			{
 				DEBUG_INFO("[Resized] Changed size to {0}x{1}", event.width, event.height);
-				camera.setViewportSize(event.width, event.height);
+				camera.setViewportSize(static_cast<float>(event.width), static_cast<float>(event.height));
 				draw();
 			}
 		);
