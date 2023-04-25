@@ -1,4 +1,3 @@
-#include <glad/glad.h>
 #include <glfw/glfw3.h>
 
 #include <imgui/imgui.h>
@@ -18,16 +17,17 @@
 #include "DespairEngine/rendering/opengl/VertexArray.hpp"
 #include "DespairEngine/rendering/opengl/IndexBuffer.hpp"
 #include "DespairEngine/rendering/opengl/RendererOpenGL.hpp"
+#include "DespairEngine/rendering/opengl/Texture2D.hpp"
 
 #include "DespairEngine/Core.hpp"
 
 namespace engine
 {
 	GLfloat positions_colors_coords[] = {
-        0.0f, -0.5f, -0.5f,   1.0f, 1.0f, 0.0f,   2.f, -1.f,
-        0.0f,  0.5f, -0.5f,   0.0f, 1.0f, 1.0f,  -1.f, -1.f,
-        0.0f, -0.5f,  0.5f,   1.0f, 0.0f, 1.0f,   2.f,  2.f,
-        0.0f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,  -1.f,  2.f
+		0.0f, -0.5f, -0.5f,   1.0f, 1.0f, 0.0f,   10.f, 0.f,
+		0.0f,  0.5f, -0.5f,   0.0f, 1.0f, 1.0f,   0.f,  0.f,
+		0.0f, -0.5f,  0.5f,   1.0f, 0.0f, 1.0f,   10.f, 10.f,
+		0.0f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   0.f,  10.f
 	};
 
 	GLuint indices[] = {
@@ -146,6 +146,8 @@ namespace engine
 	std::unique_ptr<VertexBuffer> p_positions_colors_vbo;
 	std::unique_ptr<IndexBuffer> p_index_buffer;
 	std::unique_ptr<VertexArray> p_vao;
+	std::unique_ptr<Texture2D> p_texture_smile;
+	std::unique_ptr<Texture2D> p_texture_quads;
 	float scale[3] = { 1.f, 1.f, 1.f };
 	float rotate = 0.f;
 	float translate[3] = { 0.f, 0.f, 0.f };
@@ -240,29 +242,13 @@ namespace engine
 		const unsigned int n_channels = 3;
 		auto* data = new unsigned char[n_width * n_height * n_channels];
 
-		GLuint textureHandle_Smile;
-		glCreateTextures(GL_TEXTURE_2D, 1, &textureHandle_Smile);
-		glTextureStorage2D(textureHandle_Smile, 1, GL_RGB8, n_width, n_height);
 		generate_smile_texture(data, n_width, n_height);
-		glTextureSubImage2D(textureHandle_Smile, 0, 0, 0, n_width, n_height, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glTextureParameteri(textureHandle_Smile, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(textureHandle_Smile, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTextureParameteri(textureHandle_Smile, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(textureHandle_Smile, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTextureUnit(0, textureHandle_Smile);
+		p_texture_smile = std::make_unique<Texture2D>(data, n_width, n_height);
+		p_texture_smile->bind(0);
 
-
-		GLuint textureHandle_Quads;
-		glCreateTextures(GL_TEXTURE_2D, 1, &textureHandle_Quads);
-		glTextureStorage2D(textureHandle_Quads, 1, GL_RGB8, n_width, n_height);
 		generate_quads_texture(data, n_width, n_height);
-		glTextureSubImage2D(textureHandle_Quads, 0, 0, 0, n_width, n_height, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glTextureParameteri(textureHandle_Quads, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(textureHandle_Quads, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTextureParameteri(textureHandle_Quads, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(textureHandle_Quads, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTextureUnit(1, textureHandle_Quads);
-
+		p_texture_quads = std::make_unique<Texture2D>(data, n_width, n_height);
+		p_texture_quads->bind(1);
 
 		delete[] data;
 
@@ -322,7 +308,7 @@ namespace engine
 			glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
 			p_shader_program->setMatrix4("model_matrix", model_matrix);
 			p_shader_program->setMatrix4("model_matrix", model_matrix);
-			p_shader_program->setInt("current_frame", current_frame++);
+			//p_shader_program->setInt("current_frame", current_frame++);
 
 			camera.setProjectionMode(perspective_camera ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic);
 			p_shader_program->setMatrix4("view_projection_matrix", camera.getProjectionMatrix()* camera.getViewMatrix());
@@ -352,9 +338,6 @@ namespace engine
 			m_ptr_window->update();
 			update();
 		}
-
-		glDeleteTextures(1, &textureHandle_Smile);
-		glDeleteTextures(1, &textureHandle_Quads);
 
 		m_ptr_window = nullptr;
 

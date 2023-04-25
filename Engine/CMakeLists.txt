@@ -19,6 +19,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/DespairEngine/rendering/opengl/VertexArray.hpp
 	src/DespairEngine/rendering/opengl/IndexBuffer.hpp
 	src/DespairEngine/rendering/opengl/RendererOpenGL.hpp
+	src/DespairEngine/rendering/opengl/Texture2D.hpp
 	
 )
 
@@ -33,6 +34,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/DespairEngine/rendering/opengl/VertexArray.cpp
 	src/DespairEngine/rendering/opengl/IndexBuffer.cpp
 	src/DespairEngine/rendering/opengl/RendererOpenGL.cpp
+	src/DespairEngine/rendering/opengl/Texture2D.cpp
 )
 
 set(ENGINE_ALL_SOURCES
