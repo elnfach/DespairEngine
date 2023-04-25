@@ -158,6 +158,7 @@ namespace engine
            uniform mat4 model_view_matrix;
            uniform mat4 mvp_matrix;
            uniform mat3 normal_matrix;
+		   uniform int current_frame; 
 
 		   out vec2 tex_coord_smile;
            out vec2 tex_coord_quads;
