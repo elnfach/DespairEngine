@@ -443,8 +443,8 @@ namespace engine
 		p_cube_positions_vbo = std::make_unique<VertexBuffer>(pos_norm_uv, sizeof(pos_norm_uv), buffer_layout_vec3_vec3_vec2);
 		p_cube_index_buffer = std::make_unique<IndexBuffer>(indices, sizeof(indices) / sizeof(GLuint));
 
-		p_cube_vao->add_vertex_buffer(*p_cube_positions_vbo);
-		p_cube_vao->set_index_buffer(*p_cube_index_buffer);
+		p_cube_vao->addVertexBuffer(*p_cube_positions_vbo);
+		p_cube_vao->setIndexBuffer(*p_cube_index_buffer);
 
 		//---------------------------------------//
 

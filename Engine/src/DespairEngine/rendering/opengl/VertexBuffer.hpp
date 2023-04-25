@@ -44,8 +44,8 @@ namespace engine {
             }
         }
 
-        const std::vector<BufferElement>& get_elements() const { return m_elements; }
-        size_t get_stride() const { return m_stride; }
+        const std::vector<BufferElement>& getElements() const { return m_elements; }
+        size_t getStride() const { return m_stride; }
 
     private:
         std::vector<BufferElement> m_elements;
@@ -74,10 +74,9 @@ namespace engine {
         VertexBuffer& operator=(VertexBuffer&& vertexBuffer) noexcept;
         VertexBuffer(VertexBuffer&& vertexBuffer) noexcept;
 
-        void bind() const;
-        static void unbind();
+        unsigned int getHandle() const { return m_id; }
 
-        const BufferLayout& get_layout() const { return m_buffer_layout; }
+        const BufferLayout& getLayout() const { return m_buffer_layout; }
     };
 
 }

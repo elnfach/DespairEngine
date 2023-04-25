@@ -8,7 +8,7 @@
 
 namespace engine {
 
-    constexpr unsigned int shader_data_type_to_components_count(const ShaderDataType type)
+    constexpr unsigned int shaderDataTypeToComponentsCount(const ShaderDataType type)
     {
         switch (type)
         {
@@ -34,7 +34,7 @@ namespace engine {
     }
 
 
-    constexpr size_t shader_data_type_size(const ShaderDataType type)
+    constexpr size_t shaderDataTypeSize(const ShaderDataType type)
     {
         switch (type)
         {
@@ -42,13 +42,13 @@ namespace engine {
         case ShaderDataType::Float2:
         case ShaderDataType::Float3:
         case ShaderDataType::Float4:
-            return sizeof(GLfloat) * shader_data_type_to_components_count(type);
+            return sizeof(GLfloat) * shaderDataTypeToComponentsCount(type);
 
         case ShaderDataType::Int:
         case ShaderDataType::Int2:
         case ShaderDataType::Int3:
         case ShaderDataType::Int4:
-            return sizeof(GLint) * shader_data_type_to_components_count(type);
+            return sizeof(GLint) * shaderDataTypeToComponentsCount(type);
         }
 
         DEBUG_ERROR("shader_data_type_size: unknown ShaderDataType!");
@@ -56,7 +56,7 @@ namespace engine {
     }
 
 
-    constexpr unsigned int shader_data_type_to_component_type(const ShaderDataType type)
+    constexpr unsigned int shaderDataTypeToComponentType(const ShaderDataType type)
     {
         switch (type)
         {
@@ -77,7 +77,7 @@ namespace engine {
         return GL_FLOAT;
     }
 
-    constexpr GLenum usage_to_GLenum(const VertexBuffer::EUsage usage)
+    constexpr GLenum usageToGLenum(const VertexBuffer::EUsage usage)
     {
         switch (usage)
         {
@@ -92,9 +92,9 @@ namespace engine {
 
     BufferElement::BufferElement(const ShaderDataType _type)
         : type(_type)
-        , component_type(shader_data_type_to_component_type(_type))
-        , components_count(shader_data_type_to_components_count(_type))
-        , size(shader_data_type_size(_type))
+        , component_type(shaderDataTypeToComponentType(_type))
+        , components_count(shaderDataTypeToComponentType(_type))
+        , size(shaderDataTypeSize(_type))
         , offset(0)
     {
     }
@@ -105,7 +105,7 @@ namespace engine {
     {
         glGenBuffers(1, &m_id);
         glBindBuffer(GL_ARRAY_BUFFER, m_id);
-        glBufferData(GL_ARRAY_BUFFER, size, data, usage_to_GLenum(usage));
+        glBufferData(GL_ARRAY_BUFFER, size, data, usageToGLenum(usage));
     }
 
     VertexBuffer::~VertexBuffer()
@@ -125,15 +125,5 @@ namespace engine {
         , m_buffer_layout(std::move(vertexBuffer.m_buffer_layout))
     {
         vertexBuffer.m_id = 0;
-    }
-
-    void VertexBuffer::bind() const
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, m_id);
-    }
-
-    void VertexBuffer::unbind()
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 }

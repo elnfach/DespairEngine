@@ -30,7 +30,7 @@ namespace engine {
     void RendererOpenGL::draw(const VertexArray& vertex_array)
     {
         vertex_array.bind();
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vertex_array.get_indices_count()), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vertex_array.getIndicesCount()), GL_UNSIGNED_INT, nullptr);
     }
 
     void RendererOpenGL::setClearColor(const float r, const float g, const float b, const float a)

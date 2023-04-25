@@ -16,11 +16,11 @@ namespace engine {
         VertexArray& operator=(VertexArray&& vertex_buffer) noexcept;
         VertexArray(VertexArray&& vertex_buffer) noexcept;
 
-        void add_vertex_buffer(const VertexBuffer& vertex_buffer);
-        void set_index_buffer(const IndexBuffer& index_buffer);
+        void addVertexBuffer(const VertexBuffer& vertex_buffer);
+        void setIndexBuffer(const IndexBuffer& index_buffer);
         void bind() const;
         static void unbind();
-        size_t get_indices_count() const { return m_indices_count; }
+        size_t getIndicesCount() const { return m_indices_count; }
 
     private:
         unsigned int m_id = 0;
