@@ -32,6 +32,7 @@ namespace engine
 		unsigned int getHeight() const { return m_window_data.height; }
 
 		glm::vec2 getCurrentCursorPosition() const;
+		void hideMouseCursor();
 		
 		void set_event_callback(const EventCallBackFn& callback) { m_window_data.eventCallBackFn = callback; }
 	private:

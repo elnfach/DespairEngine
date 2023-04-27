@@ -32,6 +32,7 @@ namespace engine
 			const bool pressed) {}
 
 		glm::vec2 getCurrentCursorPosition() const;
+		void hideMouseCursor();
 
 		Camera camera{ glm::vec3(-5.f, 0.f, 0.f) };
 

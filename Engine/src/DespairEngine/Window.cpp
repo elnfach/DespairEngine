@@ -10,6 +10,7 @@
 #include "DespairEngine/rendering/opengl/RendererOpenGL.hpp"
 
 #include "Window.hpp"
+#include <iostream>
 
 namespace engine
 {
@@ -85,24 +86,24 @@ namespace engine
 			[](GLFWwindow* pWindow, int button, int action, int mods)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
-		double x_pos;
-		double y_pos;
-		glfwGetCursorPos(pWindow, &x_pos, &y_pos);
-		switch (action)
-		{
-		case GLFW_PRESS:
-		{
-			EventMouseButtonPressed event(static_cast<MouseButton>(button), x_pos, y_pos);
-			data.eventCallBackFn(event);
-			break;
-		}
-		case GLFW_RELEASE:
-		{
-			EventMouseButtonReleased event(static_cast<MouseButton>(button), x_pos, y_pos);
-			data.eventCallBackFn(event);
-			break;
-		}
-		}
+				double x_pos;
+				double y_pos;
+				glfwGetCursorPos(pWindow, &x_pos, &y_pos);
+				switch (action)
+				{
+					case GLFW_PRESS:
+					{
+						EventMouseButtonPressed event(static_cast<MouseButton>(button), x_pos, y_pos);
+						data.eventCallBackFn(event);
+						break;
+					}
+					case GLFW_RELEASE:
+					{
+						EventMouseButtonReleased event(static_cast<MouseButton>(button), x_pos, y_pos);
+						data.eventCallBackFn(event);
+						break;
+					}
+				}
 			}
 		);
 
@@ -170,5 +171,15 @@ namespace engine
 		double y_pos;
 		glfwGetCursorPos(m_ptr_window, &x_pos, &y_pos);
 		return { x_pos, y_pos };
+	}
+
+	void Window::hideMouseCursor()
+	{
+		ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+		//glm::vec2 cursor_pos = getCurrentCursorPosition();
+		//glfwSetCursorPos(m_ptr_window, cursor_pos.x, cursor_pos.y);
+		//int width, height;
+		//glfwGetWindowSize(m_ptr_window, &width, &height);
+		//glfwSetCursorPos(m_ptr_window, width / 2, height / 2);
 	}
 }

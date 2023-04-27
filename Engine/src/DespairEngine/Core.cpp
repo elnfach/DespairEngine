@@ -6,6 +6,8 @@
 #include <glm/trigonometric.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
+#include <soil/src/SOIL.h>
+
 #include "Window.hpp"
 #include "DespairEngine/Input.hpp"
 #include "DespairEngine/Camera.hpp"
@@ -72,6 +74,18 @@ namespace engine
 		12, 13, 14, 14, 15, 12, // left
 		16, 17, 18, 18, 19, 16, // top
 		20, 21, 22, 22, 23, 20  // bottom
+	};
+
+	float vertices[] = {
+		// Позиции           // Текстурные координаты
+		 0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // Верхняя правая
+		 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // Нижняя правая
+		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // Нижняя левая
+		-0.5f,  0.5f, 0.0f,  0.0f, 1.0f  // Верхняя левая 
+	};
+	unsigned int indices[] = {
+	0, 1, 3, // Первый треугольник
+	1, 2, 3  // Второй треугольник
 	};
 
 	void generate_circle(unsigned char* data,
@@ -238,6 +252,7 @@ namespace engine
 	std::unique_ptr<Texture2D> p_texture_smile;
 	std::unique_ptr<Texture2D> p_texture_quads;
 	std::unique_ptr<VertexArray> p_cube_vao;
+	std::unique_ptr<Texture2D> p_texture_my_texture;
 	float m_background_color[4] = { 0.33f, 0.33f, 0.33f, 0.f };
 
 	std::array<glm::vec3, 5> positions = {
@@ -404,10 +419,18 @@ namespace engine
 			}
 		);
 
+		int soil_width, soil_height;
+		unsigned char* image =
+			SOIL_load_image("img.png", &soil_width, &soil_height, 0, SOIL_LOAD_RGB);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, soil_width, soil_height, 0, GL_RGB,
+			GL_UNSIGNED_BYTE, image);
+
 		const unsigned int n_width = 1000;
 		const unsigned int n_height = 1000;
 		const unsigned int n_channels = 3;
 		auto* data = new unsigned char[n_width * n_height * n_channels];
+
+		p_texture_my_texture = std::make_unique<Texture2D>(image, soil_width, soil_height);
 
 		generate_smile_texture(data, n_width, n_height);
 		p_texture_smile = std::make_unique<Texture2D>(data, n_width, n_height);
@@ -417,6 +440,7 @@ namespace engine
 		p_texture_quads = std::make_unique<Texture2D>(data, n_width, n_height);
 		p_texture_quads->bind(1);
 
+		SOIL_free_image_data(image);
 		delete[] data;
 
 		//---------------------------------------//
@@ -468,6 +492,11 @@ namespace engine
 	glm::vec2 Core::getCurrentCursorPosition() const
 	{
 		return m_ptr_window->getCurrentCursorPosition();
+	}
+
+	void Core::hideMouseCursor()
+	{
+		m_ptr_window->hideMouseCursor();
 	}
 
 	void Core::close()

@@ -20,7 +20,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/DespairEngine/rendering/opengl/IndexBuffer.hpp
 	src/DespairEngine/rendering/opengl/RendererOpenGL.hpp
 	src/DespairEngine/rendering/opengl/Texture2D.hpp
-	
+	src/DespairEngine/resources/loaders/ImageLoader.hpp
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -35,6 +35,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/DespairEngine/rendering/opengl/IndexBuffer.cpp
 	src/DespairEngine/rendering/opengl/RendererOpenGL.cpp
 	src/DespairEngine/rendering/opengl/Texture2D.cpp
+	src/DespairEngine/resources/loaders/ImageLoader.cpp
 )
 
 set(ENGINE_ALL_SOURCES
@@ -67,6 +68,9 @@ target_link_libraries(${ENGINE_NAME} PRIVATE glad)
 
 add_subdirectory(libs/glm ${CMAKE_CURRENT_BINARY_DIR}/glm)
 target_link_libraries(${ENGINE_NAME} PRIVATE glm)
+
+add_subdirectory(libs/soil ${CMAKE_CURRENT_BINARY_DIR}/soil)
+target_link_libraries(${ENGINE_NAME} PRIVATE SOIL)
 
 set(IMGUI_INCLUDES
 	libs/imgui/imgui.h
