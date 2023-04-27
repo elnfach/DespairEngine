@@ -1,11 +1,17 @@
-#include "RendererOpenGL.hpp"
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include <gl/GL.h>
+
+#include <glm/mat3x3.hpp>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #include "VertexArray.hpp"
 #include "DespairEngine/Debugger.hpp"
 
+#include "RendererOpenGL.hpp"
 
 namespace engine {
 
@@ -113,6 +119,14 @@ namespace engine {
     {
         vertex_array.bind();
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vertex_array.getIndicesCount()), GL_UNSIGNED_INT, nullptr);
+    }
+
+    void RendererOpenGL::initText()
+    {
+    }
+
+    void RendererOpenGL::drawText(const glm::vec2& pos, float scale, const char* text)
+    {
     }
 
     void RendererOpenGL::setClearColor(const float r, const float g, const float b, const float a)

@@ -72,6 +72,9 @@ target_link_libraries(${ENGINE_NAME} PRIVATE glm)
 add_subdirectory(libs/soil ${CMAKE_CURRENT_BINARY_DIR}/soil)
 target_link_libraries(${ENGINE_NAME} PRIVATE SOIL)
 
+add_subdirectory(libs/freetype ${CMAKE_CURRENT_BINARY_DIR}/freetype)
+target_link_libraries(${ENGINE_NAME} PRIVATE freetype)
+
 set(IMGUI_INCLUDES
 	libs/imgui/imgui.h
 	libs/imgui/backends/imgui_impl_glfw.h
