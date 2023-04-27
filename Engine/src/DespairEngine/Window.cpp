@@ -10,7 +10,6 @@
 #include "DespairEngine/rendering/opengl/RendererOpenGL.hpp"
 
 #include "Window.hpp"
-#include <iostream>
 
 namespace engine
 {
