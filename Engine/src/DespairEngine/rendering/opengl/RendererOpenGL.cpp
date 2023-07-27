@@ -125,9 +125,9 @@ namespace engine {
     {
     }
 
-    void RendererOpenGL::drawText(const glm::vec2& pos, float scale, const char* text)
+    /*void RendererOpenGL::drawText(const glm::vec2& pos, float scale, const char* text)
     {
-    }
+    }*/
 
     void RendererOpenGL::setClearColor(const float r, const float g, const float b, const float a)
     {

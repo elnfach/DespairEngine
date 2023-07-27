@@ -12,7 +12,7 @@ namespace engine {
 
         static void draw(const VertexArray& vertex_array);
         static void initText();
-        static void drawText(const glm::vec2& pos, float scale, const char* text);
+        //static void drawText(const glm::vec2& pos, float scale, const char* text);
         static void setClearColor(const float r, const float g, const float b, const float a);
         static void clear();
         static void setViewport(const unsigned int width, const unsigned int height, const unsigned int left_offset = 0, const unsigned int bottom_offset = 0);

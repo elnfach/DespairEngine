@@ -321,8 +321,6 @@ namespace engine
 			RendererOpenGL::draw(*p_cube_vao);
 		}
 
-		RendererOpenGL::drawText();
-
 		UIModule::onUIDrawBegin();
 		onUIDraw();
 		UIModule::onUIDrawEnd();
